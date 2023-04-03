@@ -1,0 +1,60 @@
+name: Build
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2.3.3
+  
+  ## PHP
+    - name: Setup PHP 8.1 without any shared extensions
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
+    - name: Check PHP Version
+      run: php -v
+
+  ## Composer 
+    - name: Validate composer.json and composer.lock
+      working-directory: ./app
+      run: composer validate --no-check-publish
+
+    - name: Get composer cache directory
+      working-directory: ./app
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - name: Cache composer dependencies
+      uses: actions/cache@v1
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
+
+    - name: Install Composer dependencies
+      working-directory: ./app
+      run: composer install
+      
+  ## Symfony
+    - name: Check Symfony requirements
+      working-directory: ./app
+      run: vendor/bin/requirements-checker
+
+    - name: Check the Symfony console
+      working-directory: ./app
+      run: bin/console -V
+
+  ## Sources Lint
+    - name: Lint application sources
+      working-directory: ./app
+      run: bin/console lint:container
+      
+
