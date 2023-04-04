@@ -110,7 +110,13 @@ You must install:
 
    Then update the DATABASE_URL variable in the [.env](app/.env) file according to your settings.
 
-6. Start the symfony project
+6. Generate new JWT keys for production **Keep them safe**.
+
+   ```sh
+   bin/console lexik:jwt:generate-keypair --overwrite
+   ```
+
+7. Start the symfony project
 
    ```sh
    symfony server:start
