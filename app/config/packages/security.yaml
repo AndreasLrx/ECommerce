@@ -32,9 +32,13 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        # Register and login endpoints are public
         - { path: '^/api/(register|login)', roles: PUBLIC_ACCESS }
 
-        # Require authentication for all routes unless stated otherwise
+        # Reading products informations doesn't require authentication
+        - { path: ^/api/products(?:/\d*)?, roles: PUBLIC_ACCESS, methods: [GET] }
+
+        # Require authentication for all other endpoints
         - { roles: ROLE_USER }
 
 when@test:
