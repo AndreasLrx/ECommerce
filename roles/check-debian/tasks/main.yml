@@ -3,8 +3,8 @@
 - name: Shut down if not Debian
   community.general.shutdown:
     msg: "Trying to run playbook in {{ ansible_distribution }} insteed of Debian, shutting down"
-  when: ansible_facts['distribution'] != "Debian"
+  when: ansible_facts['distribution'] != "Debian" and ansible_facts['distribution_major_version'] != 11
 
 - name: Abort playbook if not Debian
   meta: end_host
-  when: ansible_facts['distribution'] != "Debian"
+  when: ansible_facts['distribution'] != "Debian" and ansible_facts['distribution_major_version'] != 11
