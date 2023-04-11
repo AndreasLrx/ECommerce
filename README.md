@@ -124,6 +124,21 @@ You must install:
 
       <p align="right">(<a href="#readme-top">Back to the top</a>)</p>
 
+### Deployment
+
+1. Copy `hosts.example` to `hosts` and fill the file with the correct host and user
+
+   ```sh
+   cp hosts.example hosts
+   ```
+
+2. Run Ansible playbook
+
+   ```sh
+   ansible-playbook playbook.yml -i hosts
+   ```
+
+      <p align="right">(<a href="#readme-top">Back to the top</a>)</p>
 ---
 
 NOW YOU KNOW EVERYTHING ABOUT Trottin'Old (except the origin of the name), FEEL FREE TO EXPLORE THE API AND HAVE FUN WITH IT.
