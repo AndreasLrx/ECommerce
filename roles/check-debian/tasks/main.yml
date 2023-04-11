@@ -1,0 +1,10 @@
+---
+# tasks file for check-debian
+- name: Shut down if not Debian
+  community.general.shutdown:
+    msg: "Trying to run playbook in {{ ansible_distribution }} insteed of Debian, shutting down"
+  when: ansible_facts['distribution'] != "Debian"
+
+- name: Abort playbook if not Debian
+  meta: end_host
+  when: ansible_facts['distribution'] != "Debian"
