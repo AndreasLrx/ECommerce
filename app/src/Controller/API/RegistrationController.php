@@ -2,27 +2,26 @@
 
 namespace App\Controller\API;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use App\Entity\User;
 use App\Controller\BaseController;
+use App\Repository\UserRepository;
 use App\Request\RegistrationRequest;
 
 class RegistrationController extends BaseController
 {
     #[Route('/register', methods: ['POST'])]
-    public function register(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, RegistrationRequest $request, JWTTokenManagerInterface $JWTManager): JsonResponse
+    public function register(UserRepository $repository, UserPasswordHasherInterface $passwordHasher, RegistrationRequest $request, JWTTokenManagerInterface $JWTManager): JsonResponse
     {
         // Login must be unique
-        if ($entityManager->getRepository(User::class)->findOneBy(["login" => $request->login]) != null)
+        if ($repository->findOneBy(["login" => $request->login]) != null)
             return $this->error("Login is already taken", Response::HTTP_UNPROCESSABLE_ENTITY);
         // Email must be unique
-        else if ($entityManager->getRepository(User::class)->findOneBy(["email" => $request->email]) != null)
+        else if ($repository->findOneBy(["email" => $request->email]) != null)
             return $this->error("Email is already taken", Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $user = new User();
@@ -38,9 +37,7 @@ class RegistrationController extends BaseController
             )
         );
 
-        $entityManager->persist($user);
-        $entityManager->flush();
-
+        $repository->save($user, true);
 
         return $this->json([
             'message' => 'Successfully registered as ' . $user->getLogin(),
