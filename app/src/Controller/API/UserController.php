@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\User;
 use App\Controller\BaseController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends BaseController
 {
@@ -28,7 +29,7 @@ class UserController extends BaseController
     }
 
     #[Route('/users', methods: ['PUT'])]
-    public function update_current_user(UserRepository $repository, RegistrationRequest $request): JsonResponse
+    public function update_current_user(UserRepository $repository, RegistrationRequest $request, UserPasswordHasherInterface $passwordHasher, ): JsonResponse
     {
         $user = $this->get_user_entity($repository);
         if ($user == null)
@@ -41,7 +42,11 @@ class UserController extends BaseController
             $user->setLogin($request->login);
         }
         if ($user->getPassword() != $request->password)
-            $user->setPassword($request->password);
+            $user->setPassword($passwordHasher->hashPassword(
+                $user,
+                $request->password
+            )
+            );
         if ($user->getEmail() != $request->email) {
             if ($repository->findOneBy(['email' => $request->email]) != null)
                 return $this->error("Email is already taken", Response::HTTP_UNPROCESSABLE_ENTITY);
