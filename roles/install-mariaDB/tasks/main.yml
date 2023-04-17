@@ -1,3 +1,7 @@
+- name: Include vars
+  include_vars: 
+    file: ../../groups-var/mariadb-vars.yml
+
 - name: Install MariaDB server
   ansible.builtin.apt: 
     name: mariadb-server
