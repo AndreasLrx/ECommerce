@@ -8,14 +8,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use App\Entity\User;
+use App\Entity\Cart;
 use App\Controller\BaseController;
+use App\Repository\CartRepository;
 use App\Repository\UserRepository;
 use App\Request\RegistrationRequest;
 
 class RegistrationController extends BaseController
 {
     #[Route('/register', methods: ['POST'])]
-    public function register(UserRepository $repository, UserPasswordHasherInterface $passwordHasher, RegistrationRequest $request, JWTTokenManagerInterface $JWTManager): JsonResponse
+    public function register(UserRepository $repository, CartRepository $cartRepository, UserPasswordHasherInterface $passwordHasher, RegistrationRequest $request, JWTTokenManagerInterface $JWTManager): JsonResponse
     {
         // Login must be unique
         if ($repository->findOneBy(["login" => $request->login]) != null)
@@ -37,6 +39,11 @@ class RegistrationController extends BaseController
             )
         );
 
+        $cart = new Cart();
+        $cart->setUser($user);
+        $cartRepository->save($cart);
+
+        $user->setCart($cart);
         $repository->save($user, true);
 
         return $this->json([

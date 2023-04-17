@@ -13,11 +13,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends BaseController
 {
-    private function get_user_entity(UserRepository $repository): User|null
-    {
-        return $repository->findOneBy(['login' => $this->getUser()->getUserIdentifier()]);
-    }
-
     #[Route('/users', methods: ['GET'])]
     public function get_current_user(UserRepository $repository): JsonResponse
     {
@@ -42,10 +37,11 @@ class UserController extends BaseController
             $user->setLogin($request->login);
         }
         if ($user->getPassword() != $request->password)
-            $user->setPassword($passwordHasher->hashPassword(
-                $user,
-                $request->password
-            )
+            $user->setPassword(
+                $passwordHasher->hashPassword(
+                    $user,
+                    $request->password
+                )
             );
         if ($user->getEmail() != $request->email) {
             if ($repository->findOneBy(['email' => $request->email]) != null)

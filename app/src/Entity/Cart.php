@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
-class Cart
+class Cart implements \JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -66,5 +66,16 @@ class Cart
         $this->user = $user;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        $totalPrice = $this->products->reduce(function (float $totalPrice, Product $p): float {
+            return $totalPrice + $p->getPrice();
+        }, 0.0); // 6
+        return array(
+            'totalPrice' => $totalPrice,
+            'products' => $this->products->toArray()
+        );
     }
 }
