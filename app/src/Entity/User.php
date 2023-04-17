@@ -42,6 +42,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class, orphanRemoval: true)]
     private Collection $orders;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Cart $cart = null;
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
@@ -193,5 +196,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
             'lastname' => $this->lastname,
             'email' => $this->email,
         );
+    }
+    public function getCart(): ?Cart
+    {
+        return $this->cart;
+    }
+
+    public function setCart(Cart $cart): self
+    {
+        // set the owning side of the relation if necessary
+        if ($cart->getUser() !== $this) {
+            $cart->setUser($this);
+        }
+
+        $this->cart = $cart;
+
+        return $this;
     }
 }
