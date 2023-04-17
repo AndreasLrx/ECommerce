@@ -11,9 +11,10 @@ use App\Entity\User;
 use App\Controller\BaseController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+#[Route('/users')]
 class UserController extends BaseController
 {
-    #[Route('/users', methods: ['GET'])]
+    #[Route('/', methods: ['GET'])]
     public function get_current_user(UserRepository $repository): JsonResponse
     {
         $user = $this->get_user_entity($repository);
@@ -23,7 +24,7 @@ class UserController extends BaseController
         return $this->json($user);
     }
 
-    #[Route('/users', methods: ['PUT'])]
+    #[Route('/', methods: ['PUT'])]
     public function update_current_user(UserRepository $repository, RegistrationRequest $request, UserPasswordHasherInterface $passwordHasher, ): JsonResponse
     {
         $user = $this->get_user_entity($repository);

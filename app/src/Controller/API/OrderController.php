@@ -10,9 +10,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Order;
 use Symfony\Component\HttpFoundation\Response;
 
+#[Route('/orders')]
 class OrderController extends BaseController
 {
-    #[Route('/orders', methods: ['GET'])]
+    #[Route('/', methods: ['GET'])]
     public function get_user_orders(UserRepository $userRepository): JsonResponse
     {
         $user = $this->get_user_entity($userRepository);
@@ -22,7 +23,7 @@ class OrderController extends BaseController
         return $this->json($user->getOrders()->toArray());
     }
 
-    #[Route('/orders/{order<\d+>}', methods: ['GET'])]
+    #[Route('/{order<\d+>}', methods: ['GET'])]
     public function get_user_order(UserRepository $userRepository, Order $order): JsonResponse
     {
         $user = $this->get_user_entity($userRepository);

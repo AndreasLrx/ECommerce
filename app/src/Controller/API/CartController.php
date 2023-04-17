@@ -12,9 +12,10 @@ use App\Entity\Order;
 use App\Repository\CartRepository;
 use App\Repository\OrderRepository;
 
+#[Route('/carts')]
 class CartController extends BaseController
 {
-    #[Route('/carts', methods: ['GET'])]
+    #[Route('/', methods: ['GET'])]
     public function get_cart(UserRepository $userRepository): JsonResponse
     {
         $user = $this->get_user_entity($userRepository);
@@ -24,7 +25,7 @@ class CartController extends BaseController
         return $this->json($user->getCart());
     }
 
-    #[Route('/carts/{product<\d+>}', methods: ['POST'])]
+    #[Route('/{product<\d+>}', methods: ['POST'])]
     public function add_product(UserRepository $userRepository, CartRepository $cartRepository, Product $product): JsonResponse
     {
         // Retrieve user entity
@@ -49,7 +50,7 @@ class CartController extends BaseController
         ]);
     }
 
-    #[Route('/carts/{product<\d+>}', methods: ['DELETE'])]
+    #[Route('/{product<\d+>}', methods: ['DELETE'])]
     public function remove_product(UserRepository $userRepository, CartRepository $cartRepository, Product $product): JsonResponse
     {
         // Retrieve user entity
@@ -74,7 +75,7 @@ class CartController extends BaseController
         ]);
     }
 
-    #[Route('/carts/validate', methods: ['POST'])]
+    #[Route('/validate', methods: ['POST'])]
     public function validate_cart(UserRepository $userRepository, CartRepository $cartRepository, OrderRepository $orderRepository): JsonResponse
     {
         // Retrieve user entity
