@@ -4,6 +4,7 @@
       - apt-transport-https
       - lsb-release
       - ca-certificates
+
 - name: Add Sury PPA repo for php8.0
   shell: |
     wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
@@ -11,3 +12,20 @@
 - name: apt update
   apt:
     update_cache: yes
+
+- name: Checking whether Composer is installed
+  stat:
+    path: "{{composer_install_dir}}/composer"
+  register: composer_path
+
+- name: Getting installed Composer version
+  shell: "{{php_executable}} {{composer_install_dir}}/composer --version 2>/dev/null || true"
+  register: composer_installed
+  when: composer_path.stat.exists
+  changed_when: (composer_installed.stdout.find(composer_version) == -1)
+
+- name: Install Composer
+  ansible.builtin.apt:
+    name: composer
+    state: latest
+  when: composer_path.stat.exists == False
