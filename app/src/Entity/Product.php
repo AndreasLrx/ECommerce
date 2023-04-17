@@ -31,9 +31,13 @@ class Product implements JsonSerializable
     #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'products')]
     private Collection $orders;
 
+    #[ORM\ManyToMany(targetEntity: Cart::class, mappedBy: 'products')]
+    private Collection $carts;
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
+        $this->carts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -125,5 +129,32 @@ class Product implements JsonSerializable
             'photo' => $this->photo,
             'price' => $this->price,
         );
+    }
+
+    /**
+     * @return Collection<int, Cart>
+     */
+    public function getCarts(): Collection
+    {
+        return $this->carts;
+    }
+
+    public function addCart(Cart $cart): self
+    {
+        if (!$this->carts->contains($cart)) {
+            $this->carts->add($cart);
+            $cart->addProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCart(Cart $cart): self
+    {
+        if ($this->carts->removeElement($cart)) {
+            $cart->removeProduct($this);
+        }
+
+        return $this;
     }
 }
