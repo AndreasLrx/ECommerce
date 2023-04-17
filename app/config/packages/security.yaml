@@ -25,6 +25,7 @@ security:
                 failure_handler: App\Security\Authentication\AuthenticationFailureHandler
 
         api:
+            pattern: ^/api/
             stateless: true
             jwt: 
                 authenticator: app.jwt_token_authenticator
