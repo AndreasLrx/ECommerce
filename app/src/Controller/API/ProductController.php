@@ -11,15 +11,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 
+#[Route('/products')]
 class ProductController extends BaseController
 {
-    #[Route('/products', methods: ["GET"], )]
+    #[Route('/', methods: ["GET"], )]
     public function read_products(ProductRepository $repository): JsonResponse
     {
         return $this->json([$repository->findAll()]);
     }
 
-    #[Route('/products', methods: ["POST"], )]
+    #[Route('/', methods: ["POST"], )]
     public function create_product(ProductRepository $repository, ProductRequest $request): JsonResponse
     {
         $product = new Product();
@@ -35,13 +36,13 @@ class ProductController extends BaseController
         ], Response::HTTP_CREATED);
     }
 
-    #[Route('/products/{product<\d+>}', methods: ["GET"], )]
+    #[Route('/{product<\d+>}', methods: ["GET"], )]
     public function read_product(Product $product): JsonResponse
     {
         return $this->json($product);
     }
 
-    #[Route('/products/{product<\d+>}', methods: ["PUT"])]
+    #[Route('/{product<\d+>}', methods: ["PUT"])]
     public function update_product(ProductRepository $repository, ProductUpdateRequest $request, Product $product): JsonResponse
     {
         if ($request->name != null)
@@ -62,7 +63,7 @@ class ProductController extends BaseController
         ]);
     }
 
-    #[Route('/products/{product<\d+>}', name: 'app_products', methods: ["DELETE"])]
+    #[Route('/{product<\d+>}', name: 'app_products', methods: ["DELETE"])]
     public function delete_product(ProductRepository $repository, Product $product): JsonResponse
     {
         $repository->remove($product, true);
