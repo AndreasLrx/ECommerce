@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
-class Order
+class Order implements \JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -83,6 +83,19 @@ class Order
         $this->user = $user;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        $totalPrice = $this->products->reduce(function (float $totalPrice, Product $p): float {
+            return $totalPrice + $p->getPrice();
+        }, 0.0);
+        return array(
+            'id' => $this->getId(),
+            'creationDate' => $this->creationDate,
+            'totalPrice' => $totalPrice,
+            'products' => $this->products->toArray()
+        );
     }
 
 }
