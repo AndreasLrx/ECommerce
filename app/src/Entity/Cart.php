@@ -72,7 +72,7 @@ class Cart implements \JsonSerializable
     {
         $totalPrice = $this->products->reduce(function (float $totalPrice, Product $p): float {
             return $totalPrice + $p->getPrice();
-        }, 0.0); // 6
+        }, 0.0);
         return array(
             'totalPrice' => $totalPrice,
             'products' => $this->products->toArray()
