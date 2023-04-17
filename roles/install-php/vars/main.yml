@@ -1,0 +1,15 @@
+---
+# vars file for install-php
+php_modules: 
+      - php8.2-cli
+      - php8.2-common
+      - php8.2-mysql
+      - php8.2-zip
+      - php8.2-gd
+      - php8.2-mbstring
+      - php8.2-curl
+      - php8.2-xml
+      - php8.1-bcmath
+php_executable: php
+composer_version: 1.6.4
+composer_install_dir: /usr/local/bin
