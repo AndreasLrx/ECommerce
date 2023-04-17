@@ -22,11 +22,12 @@ security:
                 username_path: login
                 check_path: /api/login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+                failure_handler: App\Security\Authentication\AuthenticationFailureHandler
 
         api:
             stateless: true
-            jwt: ~
+            jwt: 
+                authenticator: app.jwt_token_authenticator
 
 
     # Easy way to control access for large sections of your site

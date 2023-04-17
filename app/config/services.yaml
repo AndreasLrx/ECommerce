@@ -22,3 +22,7 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    
+    app.jwt_token_authenticator:
+        class: App\Security\Authentication\Authenticator
+        parent: lexik_jwt_authentication.security.jwt_authenticator
