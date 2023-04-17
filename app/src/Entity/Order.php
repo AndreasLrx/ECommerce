@@ -92,7 +92,7 @@ class Order implements \JsonSerializable
         }, 0.0);
         return array(
             'id' => $this->getId(),
-            'creationDate' => $this->creationDate,
+            'creationDate' => date_format($this->creationDate, "Y-m-d H:i:sp"),
             'totalPrice' => $totalPrice,
             'products' => $this->products->toArray()
         );
