@@ -1,3 +1,7 @@
+- name: include php-vars
+  include_vars:
+    file: ../../groups-var/php-vars.yml
+    
 - name: install certificates
   apt:
     pkg: 
