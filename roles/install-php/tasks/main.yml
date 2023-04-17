@@ -1,9 +1,6 @@
 - name: install certificates
   apt:
-    pkg: 
-      - apt-transport-https
-      - lsb-release
-      - ca-certificates
+    pkg: "{{php_certificates}}"
 
 - name: Add Sury PPA repo for php8.0
   shell: |

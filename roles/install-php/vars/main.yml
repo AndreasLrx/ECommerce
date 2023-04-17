@@ -13,3 +13,7 @@ php_modules:
 php_executable: php
 composer_version: 1.6.4
 composer_install_dir: /usr/local/bin
+php_certificates : 
+      - apt-transport-https
+      - lsb-release
+      - ca-certificates
