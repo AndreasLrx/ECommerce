@@ -1,0 +1,9 @@
+---
+# defaults file for composer
+
+php_executable: php
+
+composer_version: 1.6.4
+composer_install_dir: /usr/local/bin
+
+# vim: ts=2:sts=2:sw=2:et:syntax=yaml
