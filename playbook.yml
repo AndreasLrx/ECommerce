@@ -4,3 +4,4 @@
     - install-php
     - copy-project
     - apache
+    - install-mariaDB

@@ -1,0 +1,26 @@
+---
+# task file for installing MariaDB
+- name: install MariaDB client + server
+  apt:
+    pkg: 
+      - mariadb-client
+      - mariadb-server
+    state: present
+    update_cache: true
+
+- name: start MariaDB
+  service:
+    name: mysql
+    state: started
+
+- name: configure MariaDB server
+  template:
+    src: etc/mysql/mariadb.conf.d/60-server.cnf.j2
+    dest: /etc/mysql/mariadb.conf.d/60-server.cnf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart mysql
+  tags:
+    - role:mariadb:config
+
