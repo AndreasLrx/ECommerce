@@ -35,23 +35,15 @@ class ProductController extends BaseController
         ], Response::HTTP_CREATED);
     }
 
-    #[Route('/products/{id<\d+>}', methods: ["GET"], )]
-    public function read_product(ProductRepository $repository, int $id): JsonResponse
+    #[Route('/products/{product<\d+>}', methods: ["GET"], )]
+    public function read_product(Product $product): JsonResponse
     {
-        $product = $repository->find($id);
-        if ($product == null)
-            return $this->error("Cannot find product with id " . $id, Response::HTTP_NOT_FOUND);
-
         return $this->json($product);
     }
 
-    #[Route('/products/{id<\d+>}', methods: ["PUT"])]
-    public function update_product(ProductRepository $repository, ProductUpdateRequest $request, int $id): JsonResponse
+    #[Route('/products/{product<\d+>}', methods: ["PUT"])]
+    public function update_product(ProductRepository $repository, ProductUpdateRequest $request, Product $product): JsonResponse
     {
-        $product = $repository->find($id);
-        if ($product == null)
-            return $this->error("Cannot find product with id " . $id, Response::HTTP_NOT_FOUND);
-
         if ($request->name != null)
             $product->setName($request->name);
         if ($request->description != null)
@@ -65,18 +57,14 @@ class ProductController extends BaseController
 
 
         return $this->json([
-            'message' => 'Successfully updated product with id ' . $id,
+            'message' => 'Successfully updated product with id ' . $product->getId(),
             'product' => $product
         ]);
     }
 
-    #[Route('/products/{id<\d+>}', name: 'app_products', methods: ["DELETE"])]
-    public function delete_product(ProductRepository $repository, int $id): JsonResponse
+    #[Route('/products/{product<\d+>}', name: 'app_products', methods: ["DELETE"])]
+    public function delete_product(ProductRepository $repository, Product $product): JsonResponse
     {
-        $product = $repository->find($id);
-        if ($product == null)
-            return $this->error("Cannot find product with id " . $id, Response::HTTP_NOT_FOUND);
-
         $repository->remove($product, true);
         return $this->json([], Response::HTTP_NO_CONTENT);
     }
