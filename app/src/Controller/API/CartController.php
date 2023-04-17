@@ -18,11 +18,7 @@ class CartController extends BaseController
     #[Route('/', methods: ['GET'])]
     public function get_cart(UserRepository $userRepository): JsonResponse
     {
-        $user = $this->get_user_entity($userRepository);
-        if ($user == null)
-            return $this->error("Unable to fetch current user data", Response::HTTP_INTERNAL_SERVER_ERROR);
-
-        return $this->json($user->getCart());
+        return $this->json($this->get_user_entity($userRepository)->getCart());
     }
 
     #[Route('/{product<\d+>}', methods: ['POST'])]
@@ -30,9 +26,6 @@ class CartController extends BaseController
     {
         // Retrieve user entity
         $user = $this->get_user_entity($userRepository);
-        if ($user == null)
-            return $this->error("Unable to fetch current user data", Response::HTTP_INTERNAL_SERVER_ERROR);
-
         // Retrieve associated cart entity
         $cart = $user->getCart();
 
@@ -55,9 +48,6 @@ class CartController extends BaseController
     {
         // Retrieve user entity
         $user = $this->get_user_entity($userRepository);
-        if ($user == null)
-            return $this->error("Unable to fetch current user data", Response::HTTP_INTERNAL_SERVER_ERROR);
-
         // Retrieve associated cart entity
         $cart = $user->getCart();
 
@@ -80,9 +70,6 @@ class CartController extends BaseController
     {
         // Retrieve user entity
         $user = $this->get_user_entity($userRepository);
-        if ($user == null)
-            return $this->error("Unable to fetch current user data", Response::HTTP_INTERNAL_SERVER_ERROR);
-
         // Retrieve associated cart entity
         $cart = $user->getCart();
 

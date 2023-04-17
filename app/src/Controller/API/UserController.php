@@ -17,20 +17,13 @@ class UserController extends BaseController
     #[Route('/', methods: ['GET'])]
     public function get_current_user(UserRepository $repository): JsonResponse
     {
-        $user = $this->get_user_entity($repository);
-        if ($user == null)
-            return $this->error("Unable to fetch current user data", Response::HTTP_INTERNAL_SERVER_ERROR);
-
-        return $this->json($user);
+        return $this->json($this->get_user_entity($repository));
     }
 
     #[Route('/', methods: ['PUT'])]
     public function update_current_user(UserRepository $repository, RegistrationRequest $request, UserPasswordHasherInterface $passwordHasher, ): JsonResponse
     {
         $user = $this->get_user_entity($repository);
-        if ($user == null)
-            return $this->error("Unable to fetch current user data", Response::HTTP_INTERNAL_SERVER_ERROR);
-
 
         if ($user->getLogin() != $request->login) {
             if ($repository->findOneBy(['login' => $request->login]) != null)
