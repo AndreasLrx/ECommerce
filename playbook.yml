@@ -2,3 +2,4 @@
   become: true
   roles:
     - check-debian
+    - install-php
