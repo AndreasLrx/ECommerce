@@ -1,0 +1,37 @@
+- name: Install MariaDB server
+  ansible.builtin.apt: 
+    name: mariadb-server
+    state: present
+
+- name: Install MariaDB client
+  ansible.builtin.apt: 
+    name: mariadb-client
+    state: present
+
+# - name: Add DB
+#   template:
+#     src: 
+#     dest:
+
+- name: Install Pip
+  ansible.builtin.apt: 
+    update_cache: yes 
+    pkg:
+     - python3
+     - python3-pip
+
+- name: Pip PyMySQL
+  pip:
+    name: pymysql
+    state: present  
+
+- name: Create user for DB
+  community.mysql.mysql_user:
+    login_unix_socket: /run/mysqld/mysqld.sock
+    check_implicit_admin: yes
+    login_user: root
+    login_password: "{{db_login_pwd}}"
+    name: ecommerce
+    password: "{{mysql_pwd}}"
+    priv: '*.*:ALL'
+    state: present
