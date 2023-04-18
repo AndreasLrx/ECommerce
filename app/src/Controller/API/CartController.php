@@ -21,7 +21,7 @@ use OpenApi\Annotations\Schema;
 class CartController extends BaseController
 {
     #[Route('/', methods: ['GET'])]
-    #[OA\Get(description: 'Get the user cart')]
+    #[OA\Get(description: 'Fetch the user cart')]
     #[OA\Response(
         response: 200,
         description: 'Success',
