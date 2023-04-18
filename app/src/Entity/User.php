@@ -79,6 +79,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
 
     /**
      * @see UserInterface
+     * 
+     * @return string[]
      */
     public function getRoles(): array
     {
@@ -187,7 +189,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
     }
 
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return array(
             'id' => $this->id,

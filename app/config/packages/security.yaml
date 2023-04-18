@@ -40,6 +40,9 @@ security:
         # Reading products informations doesn't require authentication
         - { path: ^/api/products(?:/\d*)?, roles: PUBLIC_ACCESS, methods: [GET] }
 
+        # Documentation doesn't require authentication
+        - { path: ^/api/doc(.json)?$, roles: PUBLIC_ACCESS, methods: [GET] }
+
         # Require authentication for all other endpoints
         - { roles: ROLE_USER }
 
