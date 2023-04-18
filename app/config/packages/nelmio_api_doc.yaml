@@ -47,6 +47,45 @@ nelmio_api_doc:
         # By default all routes are secured and require a bearer token
         security:
             - bearerAuth: []
+        paths:
+          /api/login:
+            get:
+              security: 
+                name: null
+              tags: 
+                - Authentication
+              description: Retrieve a bearer token using registered user credentials (login/password)
+              requestBody:
+                description: User credentials
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        login:
+                          type: string
+                        password:
+                          type: string
+              responses:
+                '200':
+                  description: 'Success'
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          token:
+                            type: string
+                '401':
+                  description: 'Invalid credentials'
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          error:
+                            type: string
     areas: # to filter documented areas
         path_patterns:
             - ^/api/(?!doc(\.json)?$) # Accepts routes under /api except /api/doc
