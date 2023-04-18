@@ -85,7 +85,7 @@ class Order implements \JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $totalPrice = $this->products->reduce(function (float $totalPrice, Product $p): float {
             return $totalPrice + $p->getPrice();
