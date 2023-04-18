@@ -1,5 +1,12 @@
 ---
 # vars file for install-php
+php_certificates : 
+      - apt-transport-https
+      - lsb-release
+      - ca-certificates
+      - git
+      - unzip
+composer_install_dir: /usr/local/bin
 php_modules: 
       - php8.2-cli
       - php8.2-common
@@ -9,11 +16,4 @@ php_modules:
       - php8.2-mbstring
       - php8.2-curl
       - php8.2-xml
-      - php8.1-bcmath
-php_executable: php
-composer_version: 1.6.4
-composer_install_dir: /usr/local/bin
-php_certificates : 
-      - apt-transport-https
-      - lsb-release
-      - ca-certificates
+      - php8.2-bcmath
