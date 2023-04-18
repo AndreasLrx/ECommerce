@@ -13,10 +13,14 @@ use App\Controller\BaseController;
 use App\Repository\CartRepository;
 use App\Repository\UserRepository;
 use App\Request\RegistrationRequest;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag('Authentication', "Endpoints related to user authentication")]
 class RegistrationController extends BaseController
 {
     #[Route('/register', methods: ['POST'])]
+    #[Security(name: null)]
     public function register(UserRepository $repository, CartRepository $cartRepository, UserPasswordHasherInterface $passwordHasher, RegistrationRequest $request, JWTTokenManagerInterface $JWTManager): JsonResponse
     {
         // Login must be unique

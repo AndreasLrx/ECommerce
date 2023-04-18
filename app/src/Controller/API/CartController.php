@@ -11,7 +11,9 @@ use App\Entity\Product;
 use App\Entity\Order;
 use App\Repository\CartRepository;
 use App\Repository\OrderRepository;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag('Cart', "Endpoints related to the user cart")]
 #[Route('/carts')]
 class CartController extends BaseController
 {

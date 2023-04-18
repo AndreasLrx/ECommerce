@@ -10,11 +10,15 @@ use App\Request\ProductUpdateRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag('Products', "Endpoints related to the shop products")]
 #[Route('/products')]
 class ProductController extends BaseController
 {
     #[Route('/', methods: ["GET"], )]
+    #[Security(name: null)]
     public function read_products(ProductRepository $repository): JsonResponse
     {
         return $this->json([$repository->findAll()]);
@@ -37,6 +41,7 @@ class ProductController extends BaseController
     }
 
     #[Route('/{product<\d+>}', methods: ["GET"], )]
+    #[Security(name: null)]
     public function read_product(Product $product): JsonResponse
     {
         return $this->json($product);
