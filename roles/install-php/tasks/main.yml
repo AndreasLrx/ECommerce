@@ -2,10 +2,11 @@
   apt:
     pkg: "{{php_certificates}}"
 
-- name: Add Sury PPA repo for php8.0
+- name: Add Sury PPA repo for php8.2
   shell: |
     wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
     echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list
+    
 - name: apt update
   apt:
     update_cache: yes
@@ -15,12 +16,18 @@
     path: "{{composer_install_dir}}/composer"
   register: composer_path
 
-- name: Install Composer
-  ansible.builtin.apt:
-    name: composer
-    state: latest
+- name: Get composer installer
+  shell: |
+    chdir=~
+    curl -sS https://getcomposer.org/installer -o composer-setup.php
+    HASH=`curl -sS https://composer.github.io/installer.sig`
+    php -r "if (hash_file('SHA384', 'composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+
+- name: Install composer globally
+  become: true
+  shell: php composer-setup.php --install-dir=/usr/local/bin --filename=composer
   when: composer_path.stat.exists == False
 
 - name: Install additionnal modules
-  ansible.builtin.apt:
+  apt:
     pkg: "{{php_modules}}"
