@@ -1,15 +1,7 @@
-- name: Install MariaDB server
+- name: Install MariaDB server & client
   become: true
-  ansible.builtin.apt: 
-    name: mariadb-server
-    state: present
-
-- name: Install MariaDB client
-  become: true
-  ansible.builtin.apt: 
-    name: mariadb-client
-    state: present
-
+  apt: "{{mysql_pkg:}}"
+  
 - name: Install Pip
   become: true
   ansible.builtin.apt: 
