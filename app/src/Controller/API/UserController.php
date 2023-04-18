@@ -10,7 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Entity\User;
 use App\Controller\BaseController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag('Users', "Endpoints related to the current user informations")]
 #[Route('/users')]
 class UserController extends BaseController
 {
