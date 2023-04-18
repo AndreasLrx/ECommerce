@@ -1,0 +1,29 @@
+---
+# tasks file for apache
+- name: Install apache2
+  become: true
+  apt:
+    name: "{{ apachepackages }}"
+
+- name: upload apache configuration file
+  become: true
+  copy:
+    src: 000-default.conf
+    dest: /etc/apache2/sites-enabled/000-default.conf
+
+- name: Check that the JWT files exists
+  stat:
+    path: /var/www/app/config/jwt/private.pem
+  register: stat_result
+- name: Generate JWT keys
+  shell: chdir=/var/www/app bin/console lexik:jwt:generate-keypair
+  when: not stat_result.stat.exists
+
+- name: Restart apache service
+  become: true
+  systemd:
+    name: apache2
+    enabled: true
+    masked: no
+    state: restarted
+    daemon_reload: true

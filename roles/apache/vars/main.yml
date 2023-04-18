@@ -1,0 +1,5 @@
+---
+# vars file for apache
+apachepackages:
+  - apache2
+  - libapache2-mod-php8.2
