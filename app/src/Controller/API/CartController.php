@@ -3,6 +3,7 @@
 namespace App\Controller\API;
 
 use App\Controller\BaseController;
+use App\Entity\Cart;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,18 +13,48 @@ use App\Entity\Order;
 use App\Repository\CartRepository;
 use App\Repository\OrderRepository;
 use OpenApi\Attributes as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations\Schema;
 
 #[OA\Tag('Cart', "Endpoints related to the user cart")]
 #[Route('/carts')]
 class CartController extends BaseController
 {
     #[Route('/', methods: ['GET'])]
+    #[OA\Get(description: 'Get the user cart')]
+    #[OA\Response(
+        response: 200,
+        description: 'Success',
+        content: new Model(type: Cart::class, groups: ["default"])
+    )]
     public function get_cart(UserRepository $userRepository): JsonResponse
     {
         return $this->json($this->get_user_entity($userRepository)->getCart());
     }
 
     #[Route('/{product<\d+>}', methods: ['POST'])]
+    #[OA\Post(description: 'Add a product to the user cart')]
+    #[OA\Parameter(
+        name: "product",
+        in: 'path',
+        required: true,
+        description: 'ID of the product to add in the cart',
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Response(
+        response: 200,
+        ref: '#components/responses/CartUpdateSuccess'
+    )]
+    #[OA\Response(
+        response: 400,
+        description: "Product is already in the cart",
+        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+    )]
+    #[OA\Response(
+        response: 404,
+        description: "Product doesn't exist",
+        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+    )]
     public function add_product(UserRepository $userRepository, CartRepository $cartRepository, Product $product): JsonResponse
     {
         // Retrieve user entity
@@ -46,6 +77,28 @@ class CartController extends BaseController
     }
 
     #[Route('/{product<\d+>}', methods: ['DELETE'])]
+    #[OA\Delete(description: 'Remove a product from the user cart')]
+    #[OA\Parameter(
+        name: "product",
+        in: 'path',
+        required: true,
+        description: 'ID of the product to remove from the cart',
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Response(
+        response: 200,
+        ref: '#components/responses/CartUpdateSuccess'
+    )]
+    #[OA\Response(
+        response: 400,
+        description: "Product is not present in the cart",
+        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+    )]
+    #[OA\Response(
+        response: 404,
+        description: "Product doesn't exist",
+        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+    )]
     public function remove_product(UserRepository $userRepository, CartRepository $cartRepository, Product $product): JsonResponse
     {
         // Retrieve user entity
@@ -68,12 +121,38 @@ class CartController extends BaseController
     }
 
     #[Route('/validate', methods: ['POST'])]
+    #[OA\Post(description: 'Validate the cart into an order and clear the cart')]
+    #[OA\Response(
+        response: 201,
+        description: "Success",
+        content: new OA\JsonContent(type: 'object', properties: [
+            new OA\Property(
+                'message',
+                type: 'string'
+            ),
+            new OA\Property(
+                'order',
+                ref: new Model(
+                    type: Order::class,
+                    groups: ["default"]
+                )
+            )
+        ])
+    )]
+    #[OA\Response(
+        response: 400,
+        description: "Cart is empty",
+        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+    )]
     public function validate_cart(UserRepository $userRepository, CartRepository $cartRepository, OrderRepository $orderRepository): JsonResponse
     {
         // Retrieve user entity
         $user = $this->get_user_entity($userRepository);
         // Retrieve associated cart entity
         $cart = $user->getCart();
+
+        if ($cart->getProducts()->isEmpty())
+            return $this->error("Cannot validate empty cart", Response::HTTP_BAD_REQUEST);
 
         // Create a new order with all cart products and save it
         $order = new Order();
