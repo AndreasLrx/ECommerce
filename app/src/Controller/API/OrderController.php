@@ -17,7 +17,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 class OrderController extends BaseController
 {
     #[Route('/', methods: ['GET'])]
-    #[OA\Get(description: 'Get the user orders')]
+    #[OA\Get(description: 'Fetch the user orders')]
     #[OA\Response(
         response: 200,
         description: 'Success',
