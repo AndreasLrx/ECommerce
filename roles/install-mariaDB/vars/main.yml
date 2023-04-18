@@ -3,3 +3,6 @@ pip_pkg:
      - python3-pip
 db_login_pwd: root
 mysql_pwd: ecommerce
+mysql_pkg: 
+     - mariadb-server
+     - mariadb-client
