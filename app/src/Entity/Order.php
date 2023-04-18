@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -15,12 +16,15 @@ class Order implements \JsonSerializable
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["default"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(["default"])]
     private ?\DateTimeInterface $creationDate = null;
 
     #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'orders')]
+    #[Groups(["default"])]
     private Collection $products;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
@@ -85,15 +89,20 @@ class Order implements \JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): mixed
+    #[Groups(["default"])]
+    public function getTotalPrice(): float
     {
-        $totalPrice = $this->products->reduce(function (float $totalPrice, Product $p): float {
+        return $this->products->reduce(function (float $totalPrice, Product $p): float {
             return $totalPrice + $p->getPrice();
         }, 0.0);
+    }
+
+    public function jsonSerialize(): mixed
+    {
         return array(
             'id' => $this->getId(),
             'creationDate' => date_format($this->creationDate, "Y-m-d H:i:sp"),
-            'totalPrice' => $totalPrice,
+            'totalPrice' => $this->getTotalPrice(),
             'products' => $this->products->toArray()
         );
     }
