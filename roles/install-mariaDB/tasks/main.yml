@@ -1,9 +1,11 @@
 - name: Install MariaDB server
+  become: true
   ansible.builtin.apt: 
     name: mariadb-server
     state: present
 
 - name: Install MariaDB client
+  become: true
   ansible.builtin.apt: 
     name: mariadb-client
     state: present
@@ -14,6 +16,7 @@
 #     dest:
 
 - name: Install Pip
+  become: true
   ansible.builtin.apt: 
     update_cache: yes 
     pkg: "{{pip_pkg}}"
