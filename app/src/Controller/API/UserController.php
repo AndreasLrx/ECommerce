@@ -11,18 +11,37 @@ use App\Entity\User;
 use App\Controller\BaseController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use OpenApi\Attributes as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
 
 #[OA\Tag('Users', "Endpoints related to the current user informations")]
 #[Route('/users')]
 class UserController extends BaseController
 {
     #[Route('/', methods: ['GET'])]
+    #[OA\Get(description: 'Fetch informations about the authentified user')]
+    #[OA\Response(
+        response: 200,
+        description: 'Success',
+        content: new Model(type: User::class, groups: ["default"])
+    )]
     public function get_current_user(UserRepository $repository): JsonResponse
     {
         return $this->json($this->get_user_entity($repository));
     }
 
     #[Route('/', methods: ['PUT'])]
+    #[OA\Put(description: 'Update informations about the authentified user')]
+    #[OA\RequestBody(description: "New user informations", required: true, content: new Model(type: User::class, groups: ["default", "update"]))]
+    #[OA\Response(
+        response: 200,
+        description: 'Success',
+        content: new Model(type: User::class, groups: ["default"])
+    )]
+    #[OA\Response(
+        response: 422,
+        description: "User informations are invalid",
+        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+    )]
     public function update_current_user(UserRepository $repository, RegistrationRequest $request, UserPasswordHasherInterface $passwordHasher, ): JsonResponse
     {
         $user = $this->get_user_entity($repository);
@@ -52,7 +71,7 @@ class UserController extends BaseController
 
         return $this->json([
             'message' => 'Successfully updated current user informations',
-            'product' => $user
+            'user' => $user
         ]);
     }
 }

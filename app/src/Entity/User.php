@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSerializable
@@ -19,6 +20,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(["default"])]
     private ?string $login = null;
 
     #[ORM\Column]
@@ -28,15 +30,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Groups(["update"])]
     private ?string $password = null;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Groups(["default"])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["default"])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["default"])]
     private ?string $lastname = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class, orphanRemoval: true)]
