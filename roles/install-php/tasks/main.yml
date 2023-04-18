@@ -1,4 +1,4 @@
-- name: install certificates
+- name: Install certificates
   become: true
   apt:
     pkg: "{{php_certificates}}"
@@ -8,9 +8,10 @@
     wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
     echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list
     
-- name: apt update
+- name: Install php modules
   become: true
   apt:
+    pkg: "{{php_modules}}"
     update_cache: yes
 
 - name: Checking whether Composer is installed
@@ -27,10 +28,5 @@
 
 - name: Install composer globally
   become: true
-  shell: php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  shell: chdir=~ php composer-setup.php --install-dir=/usr/local/bin --filename=composer
   when: composer_path.stat.exists == False
-
-- name: Install additionnal modules
-  become: true
-  apt:
-    pkg: "{{php_modules}}"

@@ -7,7 +7,8 @@ php_certificates :
       - git
       - unzip
 composer_install_dir: /usr/local/bin
-php_modules: 
+php_modules:
+      - php8.2
       - php8.2-cli
       - php8.2-common
       - php8.2-mysql
