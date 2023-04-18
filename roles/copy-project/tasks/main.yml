@@ -1,0 +1,15 @@
+---
+# tasks file for copy-project
+- name: Copy project folder
+  become: true
+  copy:
+    src: ./app
+    dest: /var/www
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0744'
+- name: Install project dependencies
+  shell: |
+    chdir=/var/www/app
+    composer update
+    composer install

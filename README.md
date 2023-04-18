@@ -135,7 +135,7 @@ You must install:
 2. Run Ansible playbook
 
    ```sh
-   ansible-playbook playbook.yml -i hosts
+   ansible-playbook playbook.yml -i hosts --ask-become-pass
    ```
 
       <p align="right">(<a href="#readme-top">Back to the top</a>)</p>

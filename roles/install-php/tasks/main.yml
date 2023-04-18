@@ -4,6 +4,7 @@
     pkg: "{{php_certificates}}"
 
 - name: Add Sury PPA repo for php8.2
+  become: true
   shell: |
     wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
     echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list
@@ -21,12 +22,14 @@
 
 - name: Get composer installer
   shell: |
-    chdir=~
+    chdir=/tmp
     curl -sS https://getcomposer.org/installer -o composer-setup.php
+    chmod 777 composer-setup.php
     HASH=`curl -sS https://composer.github.io/installer.sig`
     php -r "if (hash_file('SHA384', 'composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+  when: composer_path.stat.exists == False
 
 - name: Install composer globally
   become: true
-  shell: chdir=~ php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  shell: chdir=/tmp php composer-setup.php --install-dir=/usr/local/bin --filename=composer
   when: composer_path.stat.exists == False
