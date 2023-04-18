@@ -10,11 +10,6 @@
     name: mariadb-client
     state: present
 
-# - name: Add DB
-#   template:
-#     src: 
-#     dest:
-
 - name: Install Pip
   become: true
   ansible.builtin.apt: 
