@@ -1,0 +1,5 @@
+pip_pkg: 
+     - python3
+     - python3-pip
+db_login_pwd: root
+mysql_pwd: ecommerce
