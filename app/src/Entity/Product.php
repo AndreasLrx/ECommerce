@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Symfony\Component\Serializer\Annotation\Groups;
+use OpenAPi\Attributes as OA;
 
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
@@ -17,22 +18,27 @@ class Product implements JsonSerializable
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(["default"])]
+    #[OA\Property(default: 1)]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["default", "create"])]
+    #[OA\Property(default: "Item 3000")]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["default", "create"])]
+    #[OA\Property(default: "Best item in this shop")]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["default", "create"])]
+    #[OA\Property(default: "https://path/to/image.png")]
     private ?string $photo = null;
 
     #[ORM\Column]
     #[Groups(["default", "create"])]
+    #[OA\Property(default: 13.37)]
     private ?float $price = null;
 
     #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'products')]
