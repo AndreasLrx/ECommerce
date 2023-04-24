@@ -1,0 +1,69 @@
+name: Deploy
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2.3.3
+
+    - name: Install ansible
+      run: |
+        sudo apt update
+        sudo apt install -y ansible
+
+      # sudo apt-add-repository ppa:ansible/ansible
+
+    - name: Write hosts file
+      run: |
+          HOST_CONTENT=$(cat << EOF
+          [web]
+          web-1 ansible_ssh_host=${{secrets.DEPLOY_IP}} ansible_user=${{secrets.DEPLOY_USER}} ansible_port=${{secrets.DEPLOY_PORT}}
+          EOF
+          )
+          echo "$HOST_CONTENT" > hosts
+
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+        name: id_ed25519
+        known_hosts: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        if_key_exists: fail
+
+    - name: Restore VM to fresh install
+      run: |
+        echo "Power off the droplet"
+        curl -X POST \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
+        -d '{"type":"power_off"}' \
+        "https://api.digitalocean.com/v2/droplets/${{ secrets.DIGITALOCEAN_DROPLET }}/actions"
+
+        sleep 5
+        echo -e "\nRestore the droplet to a fresh install"
+        curl -X POST \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
+        -d '{"type":"restore", "image": "${{ secrets.FRESH_INSTALL_SNAPSHOT_ID }}" }' \
+        "https://api.digitalocean.com/v2/droplets/${{ secrets.DIGITALOCEAN_DROPLET }}/actions"
+
+        sleep 10
+        echo -e "\nPower on the droplet"
+        curl -X POST \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
+        -d '{"type":"power_on"}' \
+        "https://api.digitalocean.com/v2/droplets/${{ secrets.DIGITALOCEAN_DROPLET }}/actions"
+
+        echo -e "\nWait 30sec for the droplet to be on"
+        sleep 30
+
+    - name: Run deployment
+      run: ansible-playbook playbook.yml -i hosts --extra-vars "ansible_sudo_pass=${{ secrets.DEPLOY_SUDO_PWD }}"
+  
