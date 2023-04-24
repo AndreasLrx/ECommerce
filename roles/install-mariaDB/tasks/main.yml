@@ -1,6 +1,6 @@
 - name: Install MariaDB server & client
   become: true
-  apt: "{{mysql_pkg:}}"
+  apt: "{{mysql_pkg}}"
   
 - name: Install Pip
   become: true
