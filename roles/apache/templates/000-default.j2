@@ -32,7 +32,7 @@
     # optionally set the value of the environment variables used in the application
     #SetEnv APP_ENV prod
     #SetEnv APP_SECRET <app-secret-id>
-    #SetEnv DATABASE_URL "mysql://db_user:db_pass@host:3306/db_name"
+    SetEnv DATABASE_URL mysql://{{ db_user }}:{{db_password }}@127.0.0.1:3306/{{ db_name }}
     
     # authorization header mode
     SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
