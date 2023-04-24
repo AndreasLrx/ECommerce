@@ -13,6 +13,10 @@ use OpenApi\Attributes as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
 
 #[OA\Tag('Orders', "Endpoints related to the user orders")]
+#[OA\Response(
+    response: 401,
+    ref: '#components/responses/UnauthorizedError'
+)]
 #[Route('/orders')]
 class OrderController extends BaseController
 {
@@ -43,7 +47,7 @@ class OrderController extends BaseController
         content: new Model(type: Order::class, groups: ["default"])
     )]
     #[OA\Response(
-        response: 401,
+        response: 403,
         description: "Order doesn't belong to the authentified user",
         content: new OA\JsonContent(
             ref: '#components/schemas/GeneralError',
