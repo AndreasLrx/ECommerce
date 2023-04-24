@@ -1,25 +1,39 @@
 - name: Install MariaDB server & client
   become: true
-  apt: "{{mysql_pkg}}"
+  apt: 
+    name : "{{ mysql_pkg }}"
   
 - name: Install Pip
   become: true
-  ansible.builtin.apt: 
+  apt: 
     update_cache: yes 
-    pkg: "{{pip_pkg}}"
+    name: "{{ pip_pkg }}"
 
-- name: Pip PyMySQL
+- name: Make sure pymysql is present
+  become: true
   pip:
     name: pymysql
-    state: present  
+    state: present
 
 - name: Create user for DB
+  become: true
   community.mysql.mysql_user:
     login_unix_socket: /run/mysqld/mysqld.sock
-    check_implicit_admin: yes
-    login_user: root
-    login_password: "{{db_login_pwd}}"
-    name: ecommerce
-    password: "{{mysql_pwd}}"
+    # check_implicit_admin: yes
+    # login_user: root
+    # login_password: root
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
     priv: '*.*:ALL'
     state: present
+
+- name: Create app database
+  become: true
+  community.mysql.mysql_db:
+    name: "{{ db_name }}"
+    login_user: "{{ db_user }}"
+    login_password: "{{ db_password }}"
+    state: present
+
+- name: Run table migrations
+  shell: chdir=/var/www/app bin/console doctrine:migrations:migrate -q
