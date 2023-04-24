@@ -2,6 +2,7 @@
   become: true
   apt:
     pkg: "{{php_certificates}}"
+    update_cache: yes
 
 - name: Add Sury PPA repo for php8.2
   become: true
