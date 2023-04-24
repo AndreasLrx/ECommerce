@@ -7,8 +7,8 @@
 
 - name: upload apache configuration file
   become: true
-  copy:
-    src: 000-default.conf
+  template:
+    src: 000-default.j2
     dest: /etc/apache2/sites-enabled/000-default.conf
 
 - name: Check that the JWT files exists
