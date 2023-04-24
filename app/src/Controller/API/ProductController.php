@@ -19,7 +19,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 #[Route('/products')]
 class ProductController extends BaseController
 {
-    #[Route('/', methods: ["GET"], )]
+    #[Route('', methods: ["GET"], )]
     #[OA\Get(description: 'Fetch the available products')]
     #[Security(name: null)]
     #[OA\Response(
@@ -32,7 +32,7 @@ class ProductController extends BaseController
         return $this->json([$repository->findAll()]);
     }
 
-    #[Route('/', methods: ["POST"])]
+    #[Route('', methods: ["POST"])]
     #[OA\Post(description: 'Create a new product')]
     #[OA\RequestBody(description: "Product to create", required: true, content: new Model(type: Product::class, groups: ["create"]))]
     #[OA\Response(
@@ -42,7 +42,16 @@ class ProductController extends BaseController
     #[OA\Response(
         response: 422,
         description: "Product parameters are invalid",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+        content: new OA\JsonContent(
+            ref: '#components/schemas/GeneralError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'invalid_price',
+                    ref: '#components/examples/ProductValidationErrorExamples'
+                )
+            ]
+        )
     )]
     public function create_product(ProductRepository $repository, ProductRequest $request): JsonResponse
     {
@@ -77,7 +86,16 @@ class ProductController extends BaseController
     #[OA\Response(
         response: 404,
         description: "Product doesn't exist",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+        content: new OA\JsonContent(
+            ref: '#components/schemas/BasicError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'not_found',
+                    ref: '#components/examples/ProductNotFoundErrorExample'
+                )
+            ]
+        )
     )]
     public function read_product(Product $product): JsonResponse
     {
@@ -86,7 +104,7 @@ class ProductController extends BaseController
 
     #[Route('/{product<\d+>}', methods: ["PUT"])]
     #[OA\Put(description: 'Update an existing product')]
-    #[OA\RequestBody(description: "Product to update", required: true, content: new Model(type: Product::class, groups: ["default"]))]
+    #[OA\RequestBody(description: "Product to update", required: true, content: new Model(type: Product::class, groups: ["create"]))]
     #[OA\Response(
         response: 200,
         ref: '#components/responses/ProductUpdateSuccess'
@@ -94,12 +112,30 @@ class ProductController extends BaseController
     #[OA\Response(
         response: 404,
         description: "Product doesn't exist",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+        content: new OA\JsonContent(
+            ref: '#components/schemas/BasicError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'not_found',
+                    ref: '#components/examples/ProductNotFoundErrorExample'
+                )
+            ]
+        )
     )]
     #[OA\Response(
         response: 422,
         description: "Product parameters are invalid",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+        content: new OA\JsonContent(
+            ref: '#components/schemas/GeneralError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'invalid_price',
+                    ref: '#components/examples/ProductValidationErrorExamples'
+                )
+            ]
+        )
     )]
     public function update_product(ProductRepository $repository, ProductUpdateRequest $request, Product $product): JsonResponse
     {
@@ -130,7 +166,16 @@ class ProductController extends BaseController
     #[OA\Response(
         response: 404,
         description: "Product doesn't exist",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+        content: new OA\JsonContent(
+            ref: '#components/schemas/BasicError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'not_found',
+                    ref: '#components/examples/ProductNotFoundErrorExample'
+                )
+            ]
+        )
     )]
     public function delete_product(ProductRepository $repository, Product $product): JsonResponse
     {

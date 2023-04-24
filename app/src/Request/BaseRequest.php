@@ -28,10 +28,10 @@ abstract class BaseRequest
         $res = ['error' => 'Parameters validation failed'];
 
         if ($this->kernel->getEnvironment() == "dev") {
-            $res['errors'] = [];
+            $res['details'] = [];
             /** @var \Symfony\Component\Validator\ConstraintViolation  */
             foreach ($errors as $message) {
-                $res['errors'][] = [
+                $res['details'][] = [
                     'property' => $message->getPropertyPath(),
                     'value' => $message->getInvalidValue(),
                     'message' => $message->getMessage(),

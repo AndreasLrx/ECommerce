@@ -16,7 +16,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 #[Route('/orders')]
 class OrderController extends BaseController
 {
-    #[Route('/', methods: ['GET'])]
+    #[Route('', methods: ['GET'])]
     #[OA\Get(description: 'Fetch the user orders')]
     #[OA\Response(
         response: 200,
@@ -45,12 +45,31 @@ class OrderController extends BaseController
     #[OA\Response(
         response: 401,
         description: "Order doesn't belong to the authentified user",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+        content: new OA\JsonContent(
+            ref: '#components/schemas/GeneralError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'insufficient_permission',
+                    summary: 'Insufficient permission',
+                    value: ['error' => 'You can only see your orders']
+                )
+            ]
+        )
     )]
     #[OA\Response(
         response: 404,
         description: "Order doesn't exist",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+        content: new OA\JsonContent(
+            ref: '#components/schemas/GeneralError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'not_found',
+                    ref: '#components/examples/OrderNotFoundErrorExample'
+                )
+            ]
+        )
     )]
     public function get_user_order(UserRepository $userRepository, Order $order): JsonResponse
     {

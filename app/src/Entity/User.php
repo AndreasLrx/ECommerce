@@ -10,6 +10,7 @@ use JsonSerializable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use OpenApi\Attributes as OA;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSerializable
@@ -21,6 +22,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
 
     #[ORM\Column(length: 180, unique: true)]
     #[Groups(["default"])]
+    #[OA\Property(default: "foobar")]
     private ?string $login = null;
 
     #[ORM\Column]
@@ -31,18 +33,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
      */
     #[ORM\Column]
     #[Groups(["update"])]
+    #[OA\Property(default: "my_super_password")]
     private ?string $password = null;
 
     #[ORM\Column(length: 255, unique: true)]
     #[Groups(["default"])]
+    #[OA\Property(default: "foobar@ecommerce.com")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["default"])]
+    #[OA\Property(default: "Foo")]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["default"])]
+    #[OA\Property(default: "Bar")]
     private ?string $lastname = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class, orphanRemoval: true)]

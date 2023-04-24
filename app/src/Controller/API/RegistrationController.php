@@ -31,19 +31,32 @@ class RegistrationController extends BaseController
         content: new OA\JsonContent(type: "object", properties: [
             new OA\Property(
                 'message',
-                type: 'string'
+                type: 'string',
+                default: "Successfully registered as foobar"
             ),
             new OA\Property(
                 'token',
                 type: 'string',
-                description: "Bearer Token"
+                description: "Bearer Token",
+                default: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2ODE4MzA1jTYsImV4cCI6MTY4MTgzNDExNiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoidG90bzYifQ.hZsATF6Dw4hHjlOK0ijLOUn0cPaciC2Hxpr1kCbeeoSry-VDWfNNmY24PK33SGqSxOitWf3cA5LFlKu8m18gC9q3WN0KpzKyFXJNn8syx0qwn4bBzDLkEmhKqnQK0JpyqW9T3rORTyv6uayLKi_dPRJyoENy1pvFU_c7ZFPJ9tXlrYFDi0fbiSdqOgW0lNiptJ3IvLBp-Lc5ot0-22XZ8j_FHjM3OdMiY6qnSp7EGay-c6fi69D2dLiCHmcaAInVQfOaIynFkV0-ITmrkJ7u6_tjhItG6ic7iCryiy52_dDaCiPyu0zO6X-Lo8NCnZ2UOwuJ36cY7qvtILxsVhsj6w"
             )
         ])
     )]
     #[OA\Response(
         response: 422,
         description: "User informations are invalid",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+        content: new OA\JsonContent(ref: '#components/schemas/GeneralError', examples:
+            [
+                new OA\Examples(
+                    example: 'login_taken',
+                    summary: "Registering with an unavailable login",
+                    value: ['error' => 'Login is already taken']
+                ),
+                new OA\Examples(
+                    example: 'invalid_mail',
+                    ref: '#components/examples/UserValidationErrorExample'
+                )
+            ]),
     )]
     public function register(UserRepository $repository, CartRepository $cartRepository, UserPasswordHasherInterface $passwordHasher, RegistrationRequest $request, JWTTokenManagerInterface $JWTManager): JsonResponse
     {

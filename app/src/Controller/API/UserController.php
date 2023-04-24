@@ -17,7 +17,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 #[Route('/users')]
 class UserController extends BaseController
 {
-    #[Route('/', methods: ['GET'])]
+    #[Route('', methods: ['GET'])]
     #[OA\Get(description: 'Fetch informations about the authentified user')]
     #[OA\Response(
         response: 200,
@@ -29,7 +29,7 @@ class UserController extends BaseController
         return $this->json($this->get_user_entity($repository));
     }
 
-    #[Route('/', methods: ['PUT'])]
+    #[Route('', methods: ['PUT'])]
     #[OA\Put(description: 'Update informations about the authentified user')]
     #[OA\RequestBody(description: "New user informations", required: true, content: new Model(type: User::class, groups: ["default", "update"]))]
     #[OA\Response(
@@ -40,7 +40,16 @@ class UserController extends BaseController
     #[OA\Response(
         response: 422,
         description: "User informations are invalid",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+        content: new OA\JsonContent(
+            ref: '#components/schemas/GeneralError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'invalid_mail',
+                    ref: '#components/examples/UserValidationErrorExample'
+                )
+            ]
+        )
     )]
     public function update_current_user(UserRepository $repository, RegistrationRequest $request, UserPasswordHasherInterface $passwordHasher, ): JsonResponse
     {

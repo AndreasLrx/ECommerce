@@ -20,7 +20,7 @@ use OpenApi\Annotations\Schema;
 #[Route('/carts')]
 class CartController extends BaseController
 {
-    #[Route('/', methods: ['GET'])]
+    #[Route('', methods: ['GET'])]
     #[OA\Get(description: 'Fetch the user cart')]
     #[OA\Response(
         response: 200,
@@ -46,14 +46,33 @@ class CartController extends BaseController
         ref: '#components/responses/CartUpdateSuccess'
     )]
     #[OA\Response(
-        response: 400,
-        description: "Product is already in the cart",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
-    )]
-    #[OA\Response(
         response: 404,
         description: "Product doesn't exist",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+        content: new OA\JsonContent(
+            ref: '#components/schemas/GeneralError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'not_found',
+                    ref: '#components/examples/ProductNotFoundErrorExample'
+                )
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 422,
+        description: "Product is already in the cart",
+        content: new OA\JsonContent(
+            ref: '#components/schemas/GeneralError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'already_in_cart',
+                    summary: 'Product already in cart',
+                    value: ['error' => 'Product with id 1 is already in the cart']
+                )
+            ]
+        )
     )]
     public function add_product(UserRepository $userRepository, CartRepository $cartRepository, Product $product): JsonResponse
     {
@@ -64,14 +83,14 @@ class CartController extends BaseController
 
         // Check if product is not already in the cart
         if ($cart->getProducts()->contains($product))
-            return $this->error("Product with id " . $product->getId() . " is already in the cart", Response::HTTP_BAD_REQUEST);
+            return $this->error("Product with id " . $product->getId() . " is already in the cart", Response::HTTP_UNPROCESSABLE_ENTITY);
 
         // Add the product to the cart and save it
         $cart->addProduct($product);
         $cartRepository->save($cart, true);
 
         return $this->json([
-            'message' => "Successfully added product with id " . $product->getId() . " to cart",
+            'message' => "Successfully added product with id " . $product->getId() . " in the cart",
             'cart' => $cart
         ]);
     }
@@ -90,14 +109,33 @@ class CartController extends BaseController
         ref: '#components/responses/CartUpdateSuccess'
     )]
     #[OA\Response(
-        response: 400,
-        description: "Product is not present in the cart",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
-    )]
-    #[OA\Response(
         response: 404,
         description: "Product doesn't exist",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+        content: new OA\JsonContent(
+            ref: '#components/schemas/GeneralError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'not_found',
+                    ref: '#components/examples/ProductNotFoundErrorExample'
+                )
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 422,
+        description: "Product is not present in the cart",
+        content: new OA\JsonContent(
+            ref: '#components/schemas/GeneralError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'not_in_cart',
+                    summary: 'Product not in cart',
+                    value: ['error' => 'Product with id 1 is not in the cart']
+                )
+            ]
+        )
     )]
     public function remove_product(UserRepository $userRepository, CartRepository $cartRepository, Product $product): JsonResponse
     {
@@ -108,14 +146,14 @@ class CartController extends BaseController
 
         // Check if product is present in the cart
         if (!$cart->getProducts()->contains($product))
-            return $this->error("Product with id " . $product->getId() . " is not in the cart", Response::HTTP_BAD_REQUEST);
+            return $this->error("Product with id " . $product->getId() . " is not in the cart", Response::HTTP_UNPROCESSABLE_ENTITY);
 
         // Add the product to the cart and save it
         $cart->removeProduct($product);
         $cartRepository->save($cart, true);
 
         return $this->json([
-            'message' => "Successfully removed product with id " . $product->getId() . " from cart",
+            'message' => "Successfully removed product with id " . $product->getId() . " from the cart",
             'cart' => $cart
         ]);
     }
@@ -128,7 +166,8 @@ class CartController extends BaseController
         content: new OA\JsonContent(type: 'object', properties: [
             new OA\Property(
                 'message',
-                type: 'string'
+                type: 'string',
+                default: "Successfully validated cart as order with id 0"
             ),
             new OA\Property(
                 'order',
@@ -140,9 +179,19 @@ class CartController extends BaseController
         ])
     )]
     #[OA\Response(
-        response: 400,
+        response: 422,
         description: "Cart is empty",
-        content: new OA\JsonContent(ref: '#components/schemas/GeneralError')
+        content: new OA\JsonContent(
+            ref: '#components/schemas/GeneralError',
+            examples:
+            [
+                new OA\Examples(
+                    example: 'empty_cart',
+                    summary: 'Empty Cart',
+                    value: ['error' => 'Cannot validate empty cart']
+                )
+            ]
+        )
     )]
     public function validate_cart(UserRepository $userRepository, CartRepository $cartRepository, OrderRepository $orderRepository): JsonResponse
     {
@@ -152,7 +201,7 @@ class CartController extends BaseController
         $cart = $user->getCart();
 
         if ($cart->getProducts()->isEmpty())
-            return $this->error("Cannot validate empty cart", Response::HTTP_BAD_REQUEST);
+            return $this->error("Cannot validate empty cart", Response::HTTP_UNPROCESSABLE_ENTITY);
 
         // Create a new order with all cart products and save it
         $order = new Order();
