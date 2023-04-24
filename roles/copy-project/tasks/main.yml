@@ -8,8 +8,13 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: '0744'
+
 - name: Install project dependencies
   shell: |
     chdir=/var/www/app
-    composer update
-    composer install
+    composer install --no-interaction --no-progress -q
+
+- name: upload .env configuration file
+  template:
+    src: .env.j2
+    dest: /var/www/app/.env
