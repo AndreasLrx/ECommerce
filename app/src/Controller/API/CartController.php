@@ -17,6 +17,10 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations\Schema;
 
 #[OA\Tag('Cart', "Endpoints related to the user cart")]
+#[OA\Response(
+    response: 401,
+    ref: '#components/responses/UnauthorizedError'
+)]
 #[Route('/carts')]
 class CartController extends BaseController
 {
@@ -167,7 +171,9 @@ class CartController extends BaseController
             new OA\Property(
                 'message',
                 type: 'string',
-                default: "Successfully validated cart as order with id 0"
+    default
+
+                : "Successfully validated cart as order with id 0"
             ),
             new OA\Property(
                 'order',

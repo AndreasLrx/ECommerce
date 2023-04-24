@@ -41,6 +41,22 @@ nelmio_api_doc:
           responses:
             UnauthorizedError:
               description: Access token is missing or invalid
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      error:
+                        type: string
+                  examples:
+                    token_not_found:
+                      summary: Token not found
+                      value:
+                        error: Bearer token not found
+                    token_expired:
+                      summary: Token expired
+                      value:
+                        error: Bearer token expired
             CartUpdateSuccess:
               description: Success
               content:

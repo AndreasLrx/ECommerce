@@ -14,6 +14,10 @@ use OpenApi\Attributes as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
 
 #[OA\Tag('Users', "Endpoints related to the current user informations")]
+#[OA\Response(
+    response: 401,
+    ref: '#components/responses/UnauthorizedError'
+)]
 #[Route('/users')]
 class UserController extends BaseController
 {

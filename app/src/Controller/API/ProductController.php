@@ -40,6 +40,10 @@ class ProductController extends BaseController
         ref: '#components/responses/ProductUpdateSuccess'
     )]
     #[OA\Response(
+        response: 401,
+        ref: '#components/responses/UnauthorizedError'
+    )]
+    #[OA\Response(
         response: 422,
         description: "Product parameters are invalid",
         content: new OA\JsonContent(
@@ -110,6 +114,10 @@ class ProductController extends BaseController
         ref: '#components/responses/ProductUpdateSuccess'
     )]
     #[OA\Response(
+        response: 401,
+        ref: '#components/responses/UnauthorizedError'
+    )]
+    #[OA\Response(
         response: 404,
         description: "Product doesn't exist",
         content: new OA\JsonContent(
@@ -162,6 +170,10 @@ class ProductController extends BaseController
     #[OA\Response(
         response: 204,
         description: "Success"
+    )]
+    #[OA\Response(
+        response: 401,
+        ref: '#components/responses/UnauthorizedError'
     )]
     #[OA\Response(
         response: 404,
