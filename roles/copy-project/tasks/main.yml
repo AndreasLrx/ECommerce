@@ -1,20 +1,50 @@
 ---
 # tasks file for copy-project
-- name: Copy project folder
+- name: Compress directory 
+  archive:
+    path: "{{ files }}"
+    dest: app.zip
+    format: zip
+  delegate_to: localhost
+  register: result
+
+# - name: Copy archive folder to remote
+#   become: true
+#   copy:
+#     src: app.zip
+#     dest: "/home/{{ ansible_user }}/app.zip"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+#     mode: '0744'
+#   when: result.changed
+
+- name: Create app directory
   become: true
-  copy:
-    src: ./app
-    dest: /var/www
+  file:
+    path: /var/www/app
+    state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: '0744'
+    mode: '0757'
+  when: result.changed
 
-- name: Install project dependencies
-  shell: |
-    chdir=/var/www/app
-    composer install --no-interaction --no-progress -q
+- name: Extract archive
+  unarchive:
+    src: app.zip
+    dest: /var/www/app
+    # owner: "{{ ansible_user }}"
+    # group: "{{ ansible_user }}"
+    # mode: '0744'
+  when: result.changed
 
 - name: upload .env configuration file
   template:
     src: .env.j2
     dest: /var/www/app/.env
+  when: result.changed
+
+- name: Install project dependencies
+  shell: |
+    chdir=/var/www/app
+    composer install --no-interaction --no-progress --no-scripts -q
+  when: result.changed

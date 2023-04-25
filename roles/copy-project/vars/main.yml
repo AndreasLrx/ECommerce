@@ -1,0 +1,12 @@
+---
+# vars file for copy-project
+files:
+  - ./app/bin
+  - ./app/config
+  - ./app/migrations
+  - ./app/public
+  - ./app/src
+  - ./app/templates
+  - ./app/composer.json
+  - ./app/composer.lock
+  - ./app/symfony.lock
