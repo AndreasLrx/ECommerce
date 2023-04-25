@@ -10,6 +10,7 @@
   template:
     src: 000-default.j2
     dest: /etc/apache2/sites-enabled/000-default.conf
+  register: result
 
 - name: Check that the JWT files exists
   stat:
@@ -27,3 +28,4 @@
     masked: no
     state: restarted
     daemon_reload: true
+  when: result.changed
