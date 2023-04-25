@@ -17,8 +17,6 @@ jobs:
         sudo apt update
         sudo apt install -y ansible
 
-      # sudo apt-add-repository ppa:ansible/ansible
-
     - name: Write hosts file
       run: |
           HOST_CONTENT=$(cat << EOF
@@ -66,4 +64,15 @@ jobs:
 
     - name: Run deployment
       run: ansible-playbook playbook.yml -i hosts --extra-vars "ansible_sudo_pass=${{ secrets.DEPLOY_SUDO_PWD }}"
+
+
+    - name: Power off the VM instead of consuming power for nothing
+      run: |
+        echo "Power off the droplet"
+        curl -X POST \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
+        -d '{"type":"power_off"}' \
+        "https://api.digitalocean.com/v2/droplets/${{ secrets.DIGITALOCEAN_DROPLET }}/actions"
+
   
