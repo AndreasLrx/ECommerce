@@ -40,7 +40,6 @@ In addition to those constraints, we aim to add some BONUSES:
 
 - Continuous integration
 - API endpoints documentation
-- Divided permissions for product, order... managements
 
  <p align="right">(<a href="#readme-top">Back to the top</a>)</p>
 
@@ -139,6 +138,13 @@ You must install:
    ```
 
       <p align="right">(<a href="#readme-top">Back to the top</a>)</p>
+
+### Documentation
+
+When your server is up, you can access the API documentation online at http://localhost:8000/api/doc. (Replace localhost with your server address).
+
+   <p align="right">(<a href="#readme-top">Back to the top</a>)</p>
+
 ---
 
 NOW YOU KNOW EVERYTHING ABOUT Trottin'Old (except the origin of the name), FEEL FREE TO EXPLORE THE API AND HAVE FUN WITH IT.
